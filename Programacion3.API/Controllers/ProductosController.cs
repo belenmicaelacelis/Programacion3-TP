@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Programacion3.API.Models;
+using Programacion3.API.Services;
 
 namespace Programacion3.API.Controllers;
 
@@ -7,15 +7,17 @@ namespace Programacion3.API.Controllers;
 [Route("api/[controller]")]
 public class ProductosController : ControllerBase
 {
+    private readonly IProductoService _productoService;
+
+    public ProductosController(IProductoService productoService)
+    {
+        _productoService = productoService;
+    }
+
     [HttpGet]
     public IActionResult Get()
     {
-        var productos = new List<Producto>
-        {
-            new Producto { Id = 1, Nombre = "Teclado mecánico", Precio = 45999.90m, Stock = 25 },
-            new Producto { Id = 2, Nombre = "Mouse inalámbrico", Precio = 18500.00m, Stock = 40 }
-        };
-
+        var productos = _productoService.ObtenerTodos();
         return Ok(productos);
     }
 }
