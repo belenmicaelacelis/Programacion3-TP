@@ -20,4 +20,17 @@ public class ProductosController : ControllerBase
         var productos = _productoService.ObtenerTodos();
         return Ok(productos);
     }
+
+    [HttpGet("{id}")]
+    public IActionResult GetPorId(int id)
+    {
+        var producto = _productoService.ObtenerPorId(id);
+
+        if (producto == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(producto);
+    }
 }
