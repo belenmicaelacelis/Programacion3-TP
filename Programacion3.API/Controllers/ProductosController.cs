@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Programacion3.API.Data;
 using Programacion3.API.Services;
 
 namespace Programacion3.API.Controllers;
@@ -17,20 +18,36 @@ public class ProductosController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        var productos = _productoService.ObtenerTodos();
-        return Ok(productos);
+        try
+        {
+            var productos = _productoService.ObtenerTodos();
+            return Ok(productos);
+        }
+        catch (AccesoDatosException)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new { mensaje = "Ocurrió un error al consultar los productos. Intente nuevamente más tarde." });
+        }
     }
 
     [HttpGet("{id}")]
     public IActionResult GetPorId(int id)
     {
-        var producto = _productoService.ObtenerPorId(id);
-
-        if (producto == null)
+        try
         {
-            return NotFound();
-        }
+            var producto = _productoService.ObtenerPorId(id);
 
-        return Ok(producto);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(producto);
+        }
+        catch (AccesoDatosException)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new { mensaje = "Ocurrió un error al consultar el producto. Intente nuevamente más tarde." });
+        }
     }
 }
