@@ -40,6 +40,26 @@ public class ProductoRepository : IProductoRepository
 
     public Producto? ObtenerPorId(int id)
     {
-        throw new NotImplementedException();
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand(
+            "SELECT ID, Nombre, Precio, Stock FROM Productos WHERE ID = @Id", connection);
+
+        command.Parameters.AddWithValue("@Id", id);
+
+        connection.Open();
+        using var reader = command.ExecuteReader();
+
+        if (reader.Read())
+        {
+            return new Producto
+            {
+                Id = reader.GetInt32(0),
+                Nombre = reader.GetString(1),
+                Precio = reader.GetDecimal(2),
+                Stock = reader.GetInt32(3)
+            };
+        }
+
+        return null;
     }
 }
